@@ -1,0 +1,31 @@
+name: NextMovePredictor
+options:
+  bundleIdPrefix: com.lumierax
+  deploymentTarget:
+    iOS: '15.0'
+targets:
+  NextMovePredictor:
+    type: application
+    platform: iOS
+    sources:
+      - path: NextMovePredictor
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lumierax.nextmovepredictor
+        PRODUCT_NAME: Next Move Predictor
+        MARKETING_VERSION: 1.0.0
+        CURRENT_PROJECT_VERSION: 1
+        SWIFT_VERSION: 5.0
+        TARGETED_DEVICE_FAMILY: '1,2'
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGN_IDENTITY: ''
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Next Move
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIStatusBarStyle: UIStatusBarStyleLightContent
+        INFOPLIST_KEY_NSAppTransportSecurity_NSAllowsArbitraryLoads: YES
+    scheme:
+      testTargets: []
