@@ -1,0 +1,59 @@
+name: Build unsigned IPA
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'NextMovePredictor/**'
+      - 'project.yml'
+      - '.github/workflows/build-ipa.yml'
+
+jobs:
+  build:
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build app without signing
+        run: |
+          set -euo pipefail
+          rm -rf build
+          xcodebuild \
+            -project NextMovePredictor.xcodeproj \
+            -scheme NextMovePredictor \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            build
+
+      - name: Package IPA
+        run: |
+          set -euo pipefail
+          APP_PATH="build/DerivedData/Build/Products/Release-iphoneos/Next Move Predictor.app"
+          if [ ! -d "$APP_PATH" ]; then
+            echo "App not found at $APP_PATH"
+            find build/DerivedData/Build/Products -maxdepth 3 -type d -name '*.app' -print
+            exit 1
+          fi
+          rm -rf Payload NextMovePredictor-unsigned.ipa
+          mkdir Payload
+          cp -R "$APP_PATH" Payload/
+          zip -qry NextMovePredictor-unsigned.ipa Payload
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NextMovePredictor-unsigned-ipa
+          path: NextMovePredictor-unsigned.ipa
+          if-no-files-found: error
